@@ -5,34 +5,36 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-22.04
+    # CAMBIO CLAVE: Usamos la versión 20.04 que es más estable para esto
+    runs-on: ubuntu-20.04
 
     steps:
       - uses: actions/checkout@v4
 
-      # 1. Instalar todo lo necesario manualmente (A prueba de fallos)
-      - name: Instalar Dependencias del Sistema
+      # 1. Instalar dependencias (Lista limpia sin paquetes conflictivos)
+      - name: Instalar Dependencias
         run: |
           sudo apt-get update
-          sudo apt-get install -y python3-pip build-essential git python3 python3-dev \
+          sudo apt-get install -y \
+          python3-pip build-essential git python3 python3-dev \
           ffmpeg libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev \
           libportmidi-dev libswscale-dev libavformat-dev libavcodec-dev zlib1g-dev \
-          libgstreamer1.0 gstreamer1.0-plugins-base gstreamer1.0-plugins-good \
           zip unzip autoconf libtool pkg-config libncurses5-dev libncursesw5-dev \
           libtinfo5 cmake libffi-dev libssl-dev openjdk-17-jdk
 
-      # 2. Instalar Buildozer (La herramienta de compilación)
-      - name: Instalar Buildozer y Cython
+      # 2. Instalar Buildozer y Cython
+      - name: Instalar Buildozer
         run: |
           pip3 install --upgrade pip
           pip3 install buildozer cython==0.29.33
 
-      # 3. Crear la APK (El comando "yes" acepta las licencias automáticamente)
+      # 3. Limpiar compilaciones previas (por si acaso) y Compilar
       - name: Generar APK
         run: |
+          buildozer android clean
           yes | buildozer android debug
 
-      # 4. Subir el resultado
+      # 4. Subir la APK
       - name: Subir APK
         uses: actions/upload-artifact@v4
         with:
