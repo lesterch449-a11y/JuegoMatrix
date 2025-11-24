@@ -8,9 +8,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      # ACTUALIZADO A v4
+      - uses: actions/checkout@v4
 
-      # ESTE PASO ES NUEVO: Arregla problemas de permisos y espacio
       - name: Free disk space & Fix permissions
         run: |
           sudo rm -rf /usr/share/dotnet
@@ -26,9 +26,9 @@ jobs:
           command: buildozer android debug
           buildozer_version: master
 
+      # ACTUALIZADO A v4 (Aquí estaba el error)
       - name: Upload artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: package
-          # CAMBIO IMPORTANTE: Buscamos directamente en la carpeta bin
           path: bin/*.apk
