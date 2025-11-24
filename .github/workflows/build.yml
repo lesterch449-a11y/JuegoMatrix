@@ -2,19 +2,33 @@ name: CI
 on:
   push:
     branches: [ main ]
+
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v2
+
+      # ESTE PASO ES NUEVO: Arregla problemas de permisos y espacio
+      - name: Free disk space & Fix permissions
+        run: |
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /opt/ghc
+          sudo rm -rf "/usr/local/share/boost"
+          sudo rm -rf "$AGENT_TOOLSDIRECTORY"
+          sudo chmod -R 777 .
+
       - name: Build with Buildozer
         uses: ArtemSBulgakov/buildozer-action@v1
         id: buildozer
         with:
           command: buildozer android debug
           buildozer_version: master
+
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
         with:
           name: package
-          path: ${{ steps.buildozer.outputs.filename }}
+          # CAMBIO IMPORTANTE: Buscamos directamente en la carpeta bin
+          path: bin/*.apk
