@@ -8,9 +8,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # ACTUALIZADO A v4
       - uses: actions/checkout@v4
 
+      # Limpieza y permisos (siempre útil)
       - name: Free disk space & Fix permissions
         run: |
           sudo rm -rf /usr/share/dotnet
@@ -19,14 +19,15 @@ jobs:
           sudo rm -rf "$AGENT_TOOLSDIRECTORY"
           sudo chmod -R 777 .
 
+      # AQUÍ ESTÁ EL CAMBIO: Usamos una acción más moderna
       - name: Build with Buildozer
-        uses: ArtemSBulgakov/buildozer-action@v1
+        uses: Android-for-Python/buildozer-action@v1
         id: buildozer
         with:
           command: buildozer android debug
-          buildozer_version: master
+          buildozer_version: stable
+          python_version: 3.11
 
-      # ACTUALIZADO A v4 (Aquí estaba el error)
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
